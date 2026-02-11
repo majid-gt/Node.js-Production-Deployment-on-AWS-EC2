@@ -1,111 +1,194 @@
-🚀 Node.js Application Deployment on AWS EC2
-📌 Project Overview
+<div align="center">
 
-This project demonstrates the deployment of a Node.js application on an AWS EC2 Ubuntu server using:
+# 🚀 Node.js Application Deployment on AWS EC2
 
-PM2 as a process manager
+<img src="https://img.shields.io/badge/AWS-EC2-orange?logo=amazon-aws&logoColor=white" />
+<img src="https://img.shields.io/badge/Node.js-18-green?logo=node.js&logoColor=white" />
+<img src="https://img.shields.io/badge/NGINX-ReverseProxy-brightgreen?logo=nginx&logoColor=white" />
+<img src="https://img.shields.io/badge/PM2-ProcessManager-blue?logo=pm2&logoColor=white" />
+<img src="https://img.shields.io/badge/SSL-LetsEncrypt-red?logo=letsencrypt&logoColor=white" />
 
-NGINX as a reverse proxy
+Production-ready deployment using **NGINX**, **PM2**, and **Let’s Encrypt SSL**
 
-Let’s Encrypt for SSL
+</div>
 
-Elastic IP for static public access
+---
 
-Cloudflare (DNS Provider) for domain management
+## 📌 Project Overview
 
-The objective was to deploy a production-ready Node.js application with HTTPS and process management.
+This project demonstrates deploying a **Node.js application** on an AWS EC2 Ubuntu server with:
 
-🏗 Architecture Overview
-User → Cloudflare DNS → EC2 (Elastic IP)
-                         ↓
-                      NGINX (Reverse Proxy)
-                         ↓
-                      PM2 (Process Manager)
-                         ↓
-                     Node.js App
+- PM2 as a process manager  
+- NGINX as a reverse proxy  
+- Let’s Encrypt for SSL  
+- Elastic IP for stable public access  
+- Cloudflare DNS for domain routing  
 
-🛠 Technologies Used
+> 🎯 Objective: Deploy a production-ready Node.js application with HTTPS and process persistence.
 
-AWS EC2 (Ubuntu)
+---
 
-Elastic IP
+# 🏗 Architecture Diagram
 
-Node.js (v18)
+            🌐 User
+               │
+               ▼
+    ☁ Cloudflare DNS (A Record)
+               │
+               ▼
+    🖥 AWS EC2 (Elastic IP)
+               │
+               ▼
+    🌍 NGINX (Reverse Proxy :80 / :443)
+               │
+               ▼
+    ⚙ PM2 (Process Manager)
+               │
+               ▼
+    🟢 Node.js Application (Port 8001)
 
-PM2
 
-NGINX
+    
+---
 
-Let’s Encrypt (Certbot)
+# 🛠 Technologies Used
 
-Cloudflare DNS
+- ☁ **AWS EC2 (Ubuntu)**
+- 🌐 **Elastic IP**
+- 🟢 **Node.js v18**
+- ⚙ **PM2**
+- 🌍 **NGINX**
+- 🔐 **Let’s Encrypt (Certbot)**
+- 🛡 **Cloudflare DNS**
+- 🧑‍💻 **Git & GitHub**
 
-Git & GitHub
+---
 
-☁️ Step 1: Create AWS EC2 Instance
+# ☁ Step 1 — Launch EC2 Instance
 
-Created a t2.medium Ubuntu instance
+### Create Instance
 
-Configured key pair
+- Ubuntu Server
+- t2.medium
+- Attach Elastic IP
+- Allow ports **22, 80, 443**
 
-Attached Elastic IP
+### SSH into Server
 
-Connected via SSH:
-
+```bash
 ssh ubuntu@your-ec2-public-ip
+```
+# 🟢 Step 2 — Install Node.js (v18)
 
-🟢 Step 2: Install Node.js & NPM
+## Add NodeSource Repository
+
+```bash
 curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+```
+
+## Install Node.js
+
+```bash
 sudo apt install nodejs
+```
+
+## Verify Installation
+
+```bash
 node --version
+```
 
-📥 Step 3: Clone Application
+---
 
-Repository used:
+# 📥 Step 3 — Clone Application
 
-👉 https://github.com/piyushgargdev-01/short-url-nodejs
+## Clone Repository
 
+```bash
 git clone https://github.com/piyushgargdev-01/short-url-nodejs
+```
+
+## Navigate into Project Directory
+
+```bash
 cd short-url-nodejs
+```
 
-📦 Step 4: Install Dependencies & Start App
+---
 
-Installed PM2 globally:
+# 📦 Step 4 — Install PM2 & Start Application
 
+## Install PM2 Globally
+
+```bash
 sudo npm install -g pm2
+```
 
+## Start Application
 
-Start application:
-
+```bash
 pm2 start index
+```
 
-Useful PM2 Commands
-pm2 show app
+---
+
+## ⚙ PM2 Commands
+
+### Check Application Status
+
+```bash
 pm2 status
+```
+
+### Restart Application
+
+```bash
 pm2 restart app
+```
+
+### Stop Application
+
+```bash
 pm2 stop app
+```
+
+### View Logs
+
+```bash
 pm2 logs
+```
+
+### Clear Logs
+
+```bash
 pm2 flush
+```
 
+### Enable Auto Start on Reboot
 
-Enable auto-start on reboot:
-
+```bash
 pm2 startup ubuntu
+```
 
-🌐 Step 5: Configure NGINX Reverse Proxy
+---
 
-Install NGINX:
+# 🌐 Step 5 — Install & Configure NGINX
 
+## Install NGINX
+
+```bash
 sudo apt install nginx
+```
 
+## Open Default Configuration File
 
-Edit config:
-
+```bash
 sudo nano /etc/nginx/sites-available/default
+```
 
+## Add This Inside the `server` Block
 
-Update server block:
-
+```nginx
 server_name kcmkcmkcmkcmkcmkcmkcm.dpdns.org;
 
 location / {
@@ -116,81 +199,111 @@ location / {
     proxy_set_header Host $host;
     proxy_cache_bypass $http_upgrade;
 }
+```
 
+## Test NGINX Configuration
 
-Test & restart:
-
+```bash
 sudo nginx -t
+```
+
+## Reload NGINX
+
+```bash
 sudo nginx -s reload
+```
 
-🔐 Step 6: Enable HTTPS with Let’s Encrypt
+---
 
-Install Certbot:
+# 🔐 Step 6 — Enable HTTPS with Let’s Encrypt
 
+## Install Certbot Repository
+
+```bash
 sudo add-apt-repository ppa:certbot/certbot
+```
+
+## Update Package List
+
+```bash
 sudo apt-get update
+```
+
+## Install Certbot for NGINX
+
+```bash
 sudo apt-get install python3-certbot-nginx
+```
 
+## Generate SSL Certificate
 
-Generate SSL:
-
+```bash
 sudo certbot --nginx -d kcmkcmkcmkcmkcmkcmkcm.dpdns.org
+```
 
+## Test SSL Renewal
 
-Test renewal:
-
+```bash
 certbot renew --dry-run
+```
 
-🌍 DNS Configuration
+---
 
-Domain managed via Cloudflare
+# 🌍 DNS Configuration
 
-Pointed A record to EC2 Elastic IP
+## Cloudflare Setup
 
-🚧 Challenge Faced
+- Configure **A Record**
+- Point domain to **EC2 Elastic IP**
+- Set Proxy Mode to **DNS Only**
 
-Cloudflare proxy was enabled, which masked the EC2 public IP.
+---
 
-Solution:
-Disabled proxy (set to DNS only mode) to allow SSL validation and proper routing.
+# 🚧 Challenge Faced
 
+## Issue
 
-📈 Key Learnings
+Cloudflare proxy masked the EC2 public IP, preventing proper SSL validation.
 
-Setting up a production-ready Node.js deployment
+## Solution
 
-Reverse proxy configuration with NGINX
+Switched Cloudflare to **DNS Only Mode** to allow certificate validation and direct routing.
 
-Managing Node processes using PM2
+---
 
-Handling SSL certificates using Certbot
+# 🚀 Production Readiness Features
 
-Debugging DNS issues with Cloudflare
+- Persistent Node.js process via PM2  
+- Automatic restart on server reboot  
+- HTTPS enabled with Let’s Encrypt  
+- Reverse proxy architecture using NGINX  
+- Elastic IP for stable endpoint  
 
-Understanding interaction between Elastic IP, DNS & reverse proxy
+---
 
-🚀 Production Readiness Features
+# 📈 Key Learnings
 
-Persistent Node process via PM2
+- Production-grade Node.js deployment  
+- Reverse proxy configuration  
+- SSL certificate lifecycle management  
+- DNS troubleshooting  
+- Infrastructure layering (DNS → EC2 → NGINX → PM2 → Application)  
 
-Auto restart on server reboot
+---
 
-HTTPS enabled
+# 👤 Author
 
-Reverse proxy architecture
+## Md Majid  
+### DevOps & SRE Enthusiast  
 
-Elastic IP for stable endpoint
+AWS | Node.js | Linux | NGINX  
 
+---
 
-👤 Author
+# 📜 License
 
-Md Majid
-DevOps & SRE Enthusiast
-AWS | Node.js | Linux | NGINX
+This project uses the original application:
 
-📜 License
-
-This project uses the original application from:
 https://github.com/piyushgargdev-01/short-url-nodejs
 
 Refer to the original repository for licensing details.
